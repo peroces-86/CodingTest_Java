@@ -46,6 +46,6 @@ jobs:
           git add .
           git commit -m "Sync changes from first repository [skip ci]" || echo "No changes to commit"
 
-          # PAT를 사용하여 HTTPS로 push
-          git remote set-url origin https://x-access-token:${{ secrets.PAT_TOKEN }}@github.com/actionTestTempOrg/temp.git
+          # GITHUB_TOKEN을 사용해 HTTPS URL 설정
+          git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/actionTestTempOrg/temp.git
           git push origin main
