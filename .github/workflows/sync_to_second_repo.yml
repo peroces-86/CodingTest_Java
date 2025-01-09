@@ -10,14 +10,14 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # 1. Repository 클론
+      # 1. Checkout the Source Repository
       - name: Checkout Source Repository
         uses: actions/checkout@v3
         with:
           submodules: true
-          fetch-depth: 0  # 모든 커밋 히스토리를 가져옴
+          fetch-depth: 0
 
-      # 2. 변경된 파일 탐지
+      # 2. Detect Changed Files
       - name: Detect Changed Files
         id: changes
         run: |
@@ -28,15 +28,14 @@ jobs:
           fi
           echo "changed_files=$CHANGED_FILES" >> $GITHUB_ENV
 
-      # 3. 변경된 파일 복사
+      # 3. Copy Changed Files to Second Repository
       - name: Copy Changed Files to Second Repository
         run: |
           for FILE in $CHANGED_FILES; do
-            # 두 번째 repository 디렉토리에 파일 복사
             cp --parents "$FILE" sanghoon/
           done
 
-      # 4. 두 번째 repository에 변경 사항 커밋 및 Push
+      # 4. Commit and Push to Second Repository
       - name: Commit and Push to Second Repository
         run: |
           cd sanghoon
@@ -47,5 +46,6 @@ jobs:
           git add .
           git commit -m "Sync changes from first repository [skip ci]" || echo "No changes to commit"
 
-          # 두 번째 repository에 push
+          # PAT를 사용하여 HTTPS로 push
+          git remote set-url origin https://x-access-token:${{ secrets.PAT_TOKEN }}@github.com/actionTestTempOrg/temp.git
           git push origin main
